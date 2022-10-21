@@ -3,9 +3,9 @@ import * as momentTimezone from 'moment-timezone';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './filters/http.exception.filter';
 
-async function bootstrap() {
-  const PORT = 8080;
+const PORT = 8080;
 
+async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalFilters(new AllExceptionsFilter());
 
