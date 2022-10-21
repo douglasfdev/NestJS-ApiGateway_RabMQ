@@ -1,12 +1,25 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Controller, Logger } from '@nestjs/common';
+import {
+  ClientProxy,
+  ClientProxyFactory,
+  Transport,
+} from '@nestjs/microservices';
 
-@Controller()
+@Controller('api/v1')
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  private logger = new Logger(AppController.name);
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  private clientAdminBackend: ClientProxy;
+
+  constructor() {
+    this.clientAdminBackend = ClientProxyFactory.create({
+      transport: Transport.RMQ,
+      options: {
+        urls: [
+          `amqp://${process.env.RABBITMQ_USER}:${process.env.RABBITMQ_PASS}@${process.env.RABBITMQ_IP}:${process.env.RABBITMQ_VIRTUALHOST}/${process.env.RABBITMQ_HOST}`,
+        ],
+        queue: 'admin-backend',
+      },
+    });
   }
 }
